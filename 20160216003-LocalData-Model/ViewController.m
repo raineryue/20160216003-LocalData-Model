@@ -13,6 +13,8 @@
 
 @property (nonatomic, strong) Person *person;
 
+@property (nonatomic, strong) NSMutableArray *personArray;
+
 @end
 
 @implementation ViewController
@@ -32,8 +34,10 @@
     // 2.拼接数据存储文件
     NSString *dataPlistPath = [documentPath stringByAppendingPathComponent:@"person.data"];
     
+    [self.personArray addObject:self.person];
+    
     // 3.使用归档将自定义对象存入数据存储文件类
-    [NSKeyedArchiver archiveRootObject:self.person toFile:dataPlistPath];
+    [NSKeyedArchiver archiveRootObject:self.personArray toFile:dataPlistPath];
 }
 
 /**
@@ -47,9 +51,16 @@
     NSString *dataPlistPath = [documentPath stringByAppendingPathComponent:@"person.data"];
     
     // 3.解档数据存储文件
-    Person *person = [NSKeyedUnarchiver unarchiveObjectWithFile:dataPlistPath];
+//    Person *person = [NSKeyedUnarchiver unarchiveObjectWithFile:dataPlistPath];
     
-    NSLog(@"name:%@ age:%ld", person.name, person.age);
+    NSMutableArray *personArray = [NSKeyedUnarchiver unarchiveObjectWithFile:dataPlistPath];
+    
+//    NSLog(@"name:%@ age:%ld", person.name, person.age);
+    
+    for (Person *person in personArray) {
+        NSLog(@"name:%@ age:%ld", person.name, person.age);
+    }
+    
 }
 
 /**
@@ -66,6 +77,14 @@
     }
     
     return _person;
+}
+
+- (NSArray *)personArray {
+    if (nil == _personArray) {
+        _personArray = [NSMutableArray array];
+    }
+    
+    return _personArray;
 }
 
 - (void)didReceiveMemoryWarning {
